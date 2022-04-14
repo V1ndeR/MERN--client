@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,10 +16,20 @@ import {useHttp} from "../hooks/http.hook";
 const theme = createTheme();
 
 export const RegisterPage = () => {
-    const { loading, request } = useHttp()
+    const [isError, setIsError] = useState(false)
+    const [isOk, setIsOk] = useState(false)
+    const [isOkMessage, setIsOkMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const { loading, request, error, errorClear } = useHttp()
     const [form, setFrom] = useState({
         email: '', password: '', name: ''
     })
+
+    useEffect(() => {
+        setIsError(true)
+        setErrorMessage(error)
+        setTimeout(() => errorClear(), 4000)
+    }, [error, errorMessage, isError, errorClear])
 
     const changeHandler = event => {
         setFrom({ ...form, [event.target.name]: event.target.value })
@@ -28,7 +38,11 @@ export const RegisterPage = () => {
     const registerHandler = async () => {
         try {
             const data = await request('/api/auth/register', 'POST', {...form})
-            console.log('Data', data)
+            if(data.message) {
+                setIsOk(true)
+                setIsOkMessage(data.message)
+            }
+            setTimeout(() => setIsOk(false), 3000)
         } catch (e) {}
     }
 
@@ -100,6 +114,8 @@ export const RegisterPage = () => {
                                 autoComplete="current-password"
                                 onChange={changeHandler}
                             />
+                            { isOk && <div>{isOkMessage}</div> }
+                            { isError && <div style={{ color: 'red'}}>{errorMessage}</div>}
                             <Button
                                 style={{
                                     backgroundColor: "#21b6ae",

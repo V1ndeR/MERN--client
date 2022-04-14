@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,25 +11,43 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import imgLogin from '../img/login.jpg'
+import { useHttp } from "../hooks/http.hook";
+import {AuthContext} from "../context/AuthContext";
 
 const theme = createTheme();
 
 export const LoginPage = () => {
-    // const { loading, error, request } = useHttp()
-    // const [form, setFrom] = useState({
-    //     email: '', password: ''
-    // })
+    const auth = useContext(AuthContext)
+    const [isErrorLogin, setIsErrorLogin] = useState(false)
+    const [isOkLogin, setIsOkLogin] = useState(false)
+    const [isOkMessageLogin, setIsOkMessageLogin] = useState('')
+    const [errorMessageLogin, setErrorMessageLogin] = useState('')
+    const { loading, request, error, errorClear } = useHttp()
+    const [formLogin, setFromLogin] = useState({
+        email: '', password: ''
+    })
 
-    // const changeHandler = event => {
-    //     setFrom({ ...form, [event.target.name]: event.target.value })
-    // }
-    //
-    // const registerHandler = async () => {
-    //     try {
-    //         const data = await request('/api/auth/register', 'POST', {...form})
-    //         console.log('Data', data)
-    //     } catch (e) {}
-    // }
+    useEffect(() => {
+        setIsErrorLogin(true)
+        setErrorMessageLogin(error)
+        setTimeout(() => errorClear(), 4000)
+    }, [error, errorMessageLogin, isErrorLogin, errorClear])
+
+    const changeLoginHandler = event => {
+        setFromLogin({ ...formLogin, [event.target.name]: event.target.value })
+    }
+
+    const loginHandler = async () => {
+        try {
+            const data = await request('/api/auth/login', 'POST', {...formLogin})
+            auth.login(data.token, data.userId)
+            if(data.message) {
+                setIsOkLogin(true)
+                setIsOkMessageLogin(data.message)
+            }
+            setTimeout(() => setIsOkLogin(false), 3000)
+        } catch (e) {}
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -76,6 +94,7 @@ export const LoginPage = () => {
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
+                                onChange={changeLoginHandler}
                             />
                             <TextField
                                 margin="normal"
@@ -86,7 +105,10 @@ export const LoginPage = () => {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
+                                onChange={changeLoginHandler}
                             />
+                            { isOkLogin && <div>{isOkMessageLogin}</div> }
+                            { isErrorLogin && <div style={{ color: 'red'}}>{errorMessageLogin}</div>}
                             <Button
                                 style={{
                                     backgroundColor: "#21b6ae",
@@ -95,6 +117,8 @@ export const LoginPage = () => {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                onClick={loginHandler}
+                                disabled={loading}
                             >
                                 Sign In
                             </Button>
