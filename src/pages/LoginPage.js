@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import imgLogin from '../img/login.jpg'
 import { useHttp } from "../hooks/http.hook";
-import {AuthContext} from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const theme = createTheme();
 
