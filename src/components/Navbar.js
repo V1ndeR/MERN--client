@@ -11,15 +11,17 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { AuthContext } from "../context/AuthContext";
+import Button from "@mui/material/Button";
 
-const settings = ['Logout'];
+const settings = ['Profile', 'Info'];
 
 const Navbar = () => {
     const auth = useContext(AuthContext)
+    const { token } = auth;
     const [anchorElNav, setAnchorElNav] = useState(null);
-    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null)
 
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
 
@@ -31,11 +33,43 @@ const Navbar = () => {
         setAnchorElUser(null);
     };
 
+    const handleHealthCheck = () => {
+        fetch('http://localhost:5000/health-check')
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                console.log(data)
+            })
+    }
+
+    const handleAuthheathcheck = () => {
+        fetch('http://localhost:5000/api/auth/authheathcheck', {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization' : `Bearer ${token}`
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data)
+            })
+    }
+
     const logoutHandler = () => {
         auth.logout()
     };
 
     return (
+        <>
         <AppBar position="static" style={{ background: '#2E3B55' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -102,16 +136,43 @@ const Navbar = () => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center" onClick={logoutHandler}>{setting}</Typography>
+                            {settings.map((setting, index) => (
+                                <MenuItem key={index} onClick={handleCloseUserMenu}>
+                                    <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
+                            <Typography textAlign="center" style={{ cursor: 'pointer' }} onClick={logoutHandler}>Logout</Typography>
                         </Menu>
                     </Box>
                 </Toolbar>
             </Container>
         </AppBar>
+            <div style={{ display: 'flex', margin: '0 auto', justifyContent: 'center'}}>
+                <Button
+                    style={{
+                        backgroundColor: "#21b6ae",
+                        marginRight: '20px'
+                    }}
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleHealthCheck}
+                >
+                    health-check
+                </Button>
+                <Button
+                    style={{
+                        backgroundColor: "#21b6ae",
+                    }}
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleAuthheathcheck}
+                >
+                    authheathcheck
+                </Button>
+            </div>
+        </>
     );
 };
 export default Navbar;
