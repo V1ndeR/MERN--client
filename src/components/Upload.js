@@ -1,33 +1,35 @@
 import React, { useContext, useState } from 'react'
 import Navbar from "./UI/Navbar";
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import Button from "@mui/material/Button";
+import FileInput from "./UI/FileInput";
 
 const Upload = () => {
-    const auth = useContext(AuthContext)
+    const auth = useContext(AuthContext);
     const { token, userId } = auth;
-    const [ images, setImages ] = useState(null)
-    const [ success, setSuccess] = useState(false)
-
-    console.log(userId)
+    const [ files, setFiles ] = useState(null);
+    const [ success, setSuccess] = useState(false);
+    const [ input, setInput ] = useState('');
+    const [disableSubmit, setDisableSubmit] = useState(true);
 
     function handleSubmit(e) {
         e.preventDefault();
 
         const data = new FormData()
-        data.append('img', images)
+        data.append('file', files)
         data.append('creatorUserId', userId)
+        data.append('createdDate', Date.now().toString())
+        data.append('postText', input)
 
-        axios.post('/api/images/upload', data, {
+        axios.post('/api/files/upload', data, {
             headers: {
                 'Content-Type': `multipart/form-data;`,
                 'Authorization' : `Bearer ${token}`
             }
-        }).catch(e => console.log(e))
-        setSuccess(true)
-
+        }).then(() => setSuccess(true))
+            .catch(e => console.log(e))
     }
 
     return (
@@ -51,10 +53,17 @@ const Upload = () => {
                             style={{ color: 'white' }}
                             name="file"
                             type="file"
-                            accept="image/png, image/jpg, image/jpeg"
-                            onChange={e => setImages(e.target.files[0])}
+                            accept="image/png, image/jpg, image/jpeg, video/mp4, video/x-m4v, video/*"
+                            onChange={e => setFiles(e.target.files[0])}
                         />
+                        <div>
+                            <h3 style={{ color: "white" }}>Описание</h3>
+                            <textarea
+                                onChange={event => setInput(event.target.value)}
+                                style={{ minWidth: 300, maxWidth: 300, maxHeight: 300, minHeight: 300}}/>
+                        </div>
                         <Button
+                            disabled={!files || input.length >= 538 ? disableSubmit : !disableSubmit}
                             type="submit"
                             sx={{ my: 2,
                                 color: 'white',
@@ -65,6 +74,9 @@ const Upload = () => {
                         >
                             Создать пост
                         </Button>
+                        {
+                            input.length >= 538 && <h4 style={{color: 'orange'}}>Описание не может быть больше чем 538 символов</h4>
+                        }
                     </form>
                 </Box>
             :
@@ -86,4 +98,4 @@ const Upload = () => {
     )
 }
 
-export default Upload
+export default Upload;
