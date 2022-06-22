@@ -4,7 +4,8 @@ import Box from "@mui/material/Box";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import Button from "@mui/material/Button";
-import FileInput from "./UI/FileInput";
+
+import './Upload.css'
 
 const Upload = () => {
     const auth = useContext(AuthContext);
@@ -12,7 +13,7 @@ const Upload = () => {
     const [ files, setFiles ] = useState(null);
     const [ success, setSuccess] = useState(false);
     const [ input, setInput ] = useState('');
-    const [disableSubmit, setDisableSubmit] = useState(true);
+    const [ disableSubmit, setDisableSubmit ] = useState(true);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -29,7 +30,7 @@ const Upload = () => {
                 'Authorization' : `Bearer ${token}`
             }
         }).then(() => setSuccess(true))
-            .catch(e => console.log(e))
+            .catch(e => console.error(e.message))
     }
 
     return (
@@ -41,41 +42,57 @@ const Upload = () => {
                     maxWidth: 500,
                     display: 'flex',
                     margin: '20px auto',
-                    backgroundColor: '#2E3B55',
-                    border: '1px solid black',
+                    backgroundColor: '#22272b',
+                    border: '1px solid #6c7073',
                     borderRadius: '5px'
                 }}>
                     <form
                         style={{ display: 'flex', margin: '0 auto', flexDirection: 'column', padding: '20px 0' }}
                         onSubmit={handleSubmit}
                     >
-                        <input
-                            style={{ color: 'white' }}
-                            name="file"
-                            type="file"
-                            accept="image/png, image/jpg, image/jpeg, video/mp4, video/x-m4v, video/*"
-                            onChange={e => setFiles(e.target.files[0])}
-                        />
+                        <div className="input-file-container">
+                            <input
+                                className="input-file"
+                                id="my-file"
+                                type="file"
+                                accept="image/png, image/jpg, image/jpeg, video/mp4, video/x-m4v, video/*"
+                                onChange={e => setFiles(e.target.files[0])}
+                            />
+                                <label tabIndex="0" htmlFor="my-file" className="input-file-trigger">
+                                    Select a file...
+                                </label>
+                        </div>
+                        <p className="file-return"></p>
+                        {
+                            !files
+                            ?
+                                <h4 style={{display: 'flex', justifyContent: 'center', color: 'white'}}>File not selected</h4>
+                                :
+                                <h4 style={{display: 'flex', justifyContent: 'center', color: 'white', maxWidth: 300 }}>{files.name}</h4>
+                        }
                         <div>
-                            <h3 style={{ color: "white" }}>Описание</h3>
+                            <h3 style={{ display: 'flex', justifyContent: 'center', color: "white" }}>Post description</h3>
                             <textarea
                                 onChange={event => setInput(event.target.value)}
-                                style={{ minWidth: 300, maxWidth: 300, maxHeight: 300, minHeight: 300}}/>
+                                style={{ minWidth: 300, maxWidth: 300, maxHeight: 300, minHeight: 300, borderRadius: 5}}/>
                         </div>
                         <Button
                             disabled={!files || input.length >= 538 ? disableSubmit : !disableSubmit}
                             type="submit"
                             sx={{ my: 2,
-                                color: 'white',
+                                color: '#39D2B4',
                                 display: 'block',
-                                border: '1px solid white',
-                                marginTop: 5
+                                border: '1px solid #6c7073',
+                                marginTop: 5,
+                                ":disabled" : {
+                                color: '#6c7073'
+                                }
                             }}
                         >
-                            Создать пост
+                            Create post
                         </Button>
                         {
-                            input.length >= 538 && <h4 style={{color: 'orange'}}>Описание не может быть больше чем 538 символов</h4>
+                            input.length >= 538 && <h4 style={{color: 'orange', maxWidth: 300}}>Description cannot be more than 538 characters</h4>
                         }
                     </form>
                 </Box>
@@ -91,7 +108,7 @@ const Upload = () => {
                     border: '1px solid black',
                     borderRadius: '5px'
                 }}>
-                    <div style={{ height: '100px'}}><h1>Пост создан</h1></div>
+                    <div style={{ height: '100px'}}><h1>Post created</h1></div>
                 </Box>
             }
         </>

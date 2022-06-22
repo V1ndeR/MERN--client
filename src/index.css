@@ -13,13 +13,3 @@ code {
     monospace;
 }
 
-input[type=file]::-webkit-file-upload-button {
-  border: none;
-  border-radius: 5px;
-  height: 50px;
-  background-color: white;
-}
-
-input[type=file]:hover {
-  color: black
-}

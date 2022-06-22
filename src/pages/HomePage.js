@@ -9,7 +9,6 @@ export const HomePage = (props) => {
     const [posts, setPosts] = useState([]);
     const [postPages, setPostPages] = useState(1)
     const [loading, setLoading] = useState(true);
-    // const [sortNewPosts, setSortNewPosts] = useState([]);
 
     const portion = 5;
     const totalPages = Math.ceil(100 / portion);
@@ -18,6 +17,7 @@ export const HomePage = (props) => {
     const observerLoader = useRef();
 
     useEffect(() => {
+        setLoading(true)
         setPosts([]);
         setPostPages(1);
     }, [mode]);
