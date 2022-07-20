@@ -2,17 +2,19 @@
 
 I want to try to repeat a site like habr(create posts, infinite scrolling feed). Frontend + Backend, still in development...
 
-# Getting Started with Create React App
+At the moment there is registration, authentication (jwt) and authorization, the ability to create posts with video files, pictures and descriptions, an endless scrolling feed
 
-Install all dependencies:
+# Getting Started 
+
+Download client repository [MERN--client](https://github.com/V1ndeR/MERN--client) and server repository [MERN--server](https://github.com/V1ndeR/MERN--server).
+
+## Available scripts
+
+Install all dependencies in server and client:
 
 ### `npm i`
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
+In the client's project directory, you can run:
 
 ### `npm start`
 
@@ -22,12 +24,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm run build`
+In the server project directory, you can run:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `npm run server`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The server is running on port 5000
